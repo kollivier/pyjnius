@@ -2,6 +2,7 @@ __all__ = ('set_options', 'add_options', 'get_options',
            'set_classpath', 'add_classpath', 'get_classpath',
            'expand_classpath')
 
+import logging
 import platform
 if platform.system() == 'Windows':
     split_char = ';'
@@ -39,6 +40,9 @@ def set_classpath(*path):
     """
     Sets the classpath for the JVM to use. Replaces any existing classpath, overriding the CLASSPATH environment variable.
     """
+    import traceback
+    logging.info('JNIUS DEBUG: jnius_config.set_classpath called with path {}'.format(path))
+    logging.info('call stack: {}'.format('\n'.join(traceback.format_stack())))
     if vm_running:
         raise ValueError("VM is already running, can't set classpath")
     global classpath
@@ -50,6 +54,9 @@ def add_classpath(*path):
     Appends items to the classpath for the JVM to use.
     Replaces any existing classpath, overriding the CLASSPATH environment variable.
     """
+    import traceback
+    logging.info('JNIUS DEBUG: jnius_config.add_classpath called with path {}'.format(path))
+    logging.info('call stack: {}'.format('\n'.join(traceback.format_stack())))
     if vm_running:
         raise ValueError("VM is already running, can't set classpath")
     global classpath
@@ -64,6 +71,10 @@ def get_classpath():
     from os import environ
     from os.path import realpath
     global classpath
+
+    import traceback
+    logging.info('JNIUS DEBUG: jnius_config.set_classpath called')
+    logging.info('call stack: {}'.format('\n'.join(traceback.format_stack())))
 
     # add a path to java classes packaged with jnius
     from pkg_resources import resource_filename
@@ -82,6 +93,9 @@ def get_classpath():
 
 
 def expand_classpath():
+    import traceback
+    logging.info('JNIUS DEBUG: jnius_config.set_classpath called')
+    logging.info('call stack: {}'.format('\n'.join(traceback.format_stack())))
     from glob import glob
     paths = []
     # deal with wildcards
