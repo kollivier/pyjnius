@@ -40,10 +40,6 @@ def set_classpath(*path):
     """
     Sets the classpath for the JVM to use. Replaces any existing classpath, overriding the CLASSPATH environment variable.
     """
-    raise Exception("JNIUS DEBUG: set_classpath called with {}".format(path))
-    import traceback
-    logging.info('JNIUS DEBUG: jnius_config.set_classpath called with path {}'.format(path))
-    logging.info('call stack: {}'.format('\n'.join(traceback.format_stack())))
     if vm_running:
         raise ValueError("VM is already running, can't set classpath")
     global classpath
@@ -55,10 +51,6 @@ def add_classpath(*path):
     Appends items to the classpath for the JVM to use.
     Replaces any existing classpath, overriding the CLASSPATH environment variable.
     """
-    raise Exception("JNIUS DEBUG: add_classpath called with {}".format(path))
-    import traceback
-    logging.info('JNIUS DEBUG: jnius_config.add_classpath called with path {}'.format(path))
-    logging.info('call stack: {}'.format('\n'.join(traceback.format_stack())))
     if vm_running:
         raise ValueError("VM is already running, can't set classpath")
     global classpath
@@ -69,15 +61,10 @@ def add_classpath(*path):
 
 
 def get_classpath():
-    raise Exception("jnius_config.get_classpath called")
     "Retrieves the classpath the JVM will use."
     from os import environ
     from os.path import realpath
     global classpath
-
-    import traceback
-    logging.info('JNIUS DEBUG: jnius_config.set_classpath called')
-    logging.info('call stack: {}'.format('\n'.join(traceback.format_stack())))
 
     # add a path to java classes packaged with jnius
     from pkg_resources import resource_filename
@@ -96,10 +83,6 @@ def get_classpath():
 
 
 def expand_classpath():
-    raise Exception("Expand classpath called.")
-    import traceback
-    logging.info('JNIUS DEBUG: jnius_config.set_classpath called')
-    logging.info('call stack: {}'.format('\n'.join(traceback.format_stack())))
     from glob import glob
     paths = []
     # deal with wildcards

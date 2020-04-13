@@ -6,6 +6,7 @@ from os.path import dirname, join, exists
 from os import readlink
 from sys import platform
 from .env import get_jnius_lib_location
+from warnings import warn
 
 
 cdef extern from 'dlfcn.h' nogil:
@@ -81,6 +82,7 @@ cdef void create_jnienv() except *:
     cdef void *handle
     import jnius_config
 
+    warn("Create JNIEnv called...")
     JAVA_HOME = os.getenv('JAVA_HOME') or find_java_home()
     if JAVA_HOME is None or JAVA_HOME == '':
         raise SystemError("JAVA_HOME is not set, and unable to guess JAVA_HOME")
@@ -100,13 +102,17 @@ cdef void create_jnienv() except *:
     if handle == NULL:
         raise SystemError("Error calling dlopen({0}: {1}".format(lib_path, dlerror()))
 
+    warn("Still going...")
     cdef void *jniCreateJVM = dlsym(handle, b"JNI_CreateJavaVM")
 
     if jniCreateJVM == NULL:
        raise SystemError("Error calling dlfcn for JNI_CreateJavaVM: {0}".format(dlerror()))
 
+    warn("JNI_CreateJavaVM called")
     optarr = jnius_config.options
     optarr.append("-Djava.class.path=" + jnius_config.expand_classpath())
+
+    warn("optarr = {}".format(optarr))
 
     options = <JavaVMOption*>malloc(sizeof(JavaVMOption) * len(optarr))
     for i, opt in enumerate(optarr):
@@ -124,10 +130,11 @@ cdef void create_jnienv() except *:
 
     if ret != JNI_OK:
         raise SystemError("JVM failed to start: {0}".format(ret))
-
+    warn("VM running...")
     jnius_config.vm_running = True
 
 cdef JNIEnv *get_platform_jnienv() except NULL:
+    warn("get_platform_jnienv called")
     if _platform_default_env == NULL:
         create_jnienv()
     return _platform_default_env
