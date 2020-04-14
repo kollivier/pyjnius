@@ -240,8 +240,9 @@ def autoclass(clsname):
             log.warning("Trying to load from {} directory...".format(jnius_java_dir))
             os.chdir(jnius_java_dir)
             c = find_javaclass(clsname)
-        except:
-            return None
+        except Exception as e:
+            log.warning("Attempt to load from jnius/src failed with error: {}".format(e))
+            raise e
         finally:
             os.chdir(cwd)
 
