@@ -222,10 +222,28 @@ def autoclass(clsname):
     classDict = {}
 
     # c = Class.forName(clsname)
-    c = find_javaclass(clsname)
-    if c is None:
-        raise Exception('Java class {0} not found'.format(c))
+    try:
+        c = find_javaclass(clsname)
+        if c is None:
+            raise Exception('Java class {0} not found'.format(c))
         return None
+    except Exception as e:
+        log.warning("find_javaclass failed with error: {}".format(e))
+        log.warning("Trying to load from jnius/src directory...")
+        import os
+        from os.path import realpath
+        from pkg_resources import resource_filename
+        cwd = os.getcwd()
+        try:
+            # CWD is on the java classpath, so set it to the jnius/src dir
+            # and see if we can load the sources in that case
+            jnius_java_dir = realpath(resource_filename(__name__, 'jnius/src'))
+            os.chdir(jnius_java_dir)
+            c = find_javaclass(clsname)
+        except:
+            return None
+        finally:
+            os.chdir(cwd)
 
     constructors = []
     for constructor in c.getConstructors():
