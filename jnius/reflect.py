@@ -236,7 +236,7 @@ def autoclass(clsname):
         try:
             # CWD is on the java classpath, so set it to the jnius/src dir
             # and see if we can load the sources in that case
-            jnius_java_dir = realpath(resource_filename(__name__, 'jnius/src'))
+            jnius_java_dir = realpath(resource_filename(__name__, 'src'))
             log.warning("Trying to load from {} directory...".format(jnius_java_dir))
             os.chdir(jnius_java_dir)
             c = find_javaclass(clsname)
